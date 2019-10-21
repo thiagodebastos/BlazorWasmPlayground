@@ -1,0 +1,62 @@
+@page "/todo"
+
+<PageHeader title="Todo App"/>
+
+<input @bind="CurrentValue"/>
+<button @onclick="AddTodo" type="button">Submit</button>
+
+<ul>
+    @foreach (var todo in _todos)
+    {
+        <li @key="@todo.TodoId">
+            @todo.TodoText 
+        </li>
+    }
+</ul>
+
+
+@code
+{
+    private readonly List<Todo> _todos = new List<Todo>();
+
+    private string CurrentValue { get; set; }
+
+    private void AddTodo()
+    {
+        if (CurrentValue.Trim().Length == 0)
+            return;
+        _todos.Insert(0, new Todo {TodoText = CurrentValue.Trim(), TodoId = _todos.Count + 1});
+        CurrentValue = "";
+    }
+
+    private void RemoveTodo(int todoId)
+    {
+        if (!_todos.Contains(new Todo {TodoId = todoId}))
+        {
+            Console.WriteLine("Todo with id {0} does not exist.", todoId);
+            return;
+        }
+
+        _todos.Remove(new Todo {TodoId = todoId});
+    }
+
+    private void UpdateTodo(int todoId, string text)
+    {
+        if (!_todos.Contains(new Todo {TodoId = todoId}))
+        {
+            Console.WriteLine("Todo with id {0} does not exist.", todoId);
+            return;
+        }
+        var todoToUpdate = _todos.Where(todo => todo.TodoId == todoId);
+        Console.WriteLine(todoToUpdate);
+    }
+    
+    //public event Func<int, string, UpdateTodo> 
+
+    private class Todo
+    {
+        public string TodoText { get; set; }
+        public int TodoId { get; set; }
+    }
+
+}
